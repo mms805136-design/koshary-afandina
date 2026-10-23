@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>كشري أفندينا - الطعم اللي بيجمعنا</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#0c2454;--blue2:#163875;--red:#e63946;--bg:#f6f7fb}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',sans-serif}
+body{background:var(--bg)} .header{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;padding:16px;position:sticky;top:0;z-index:100}
+.top{display:flex;justify-content:space-between;align-items:center;max-width:1300px;margin:0 auto}
+.cart-btn{background:#fff;color:var(--blue);border:none;padding:10px 18px;border-radius:999px;font-weight:700;cursor:pointer}
+.cart-count{background:var(--red);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.contact-bar{background:#fff;padding:8px 12px;text-align:center;font-size:11px;color:var(--blue);border-bottom:1px solid #eee}
+.categories{max-width:1300px;margin:12px auto;padding:0 12px;display:flex;gap:8px;overflow-x:auto;position:sticky;top:84px;z-index:90;background:var(--bg)}
+.cat-btn{white-space:nowrap;background:#fff;border:2px solid var(--blue);color:var(--blue);padding:8px 18px;border-radius:999px;font-weight:700;cursor:pointer}.cat-btn.active{background:var(--blue);color:#fff}
+.container{max-width:1300px;margin:0 auto;padding:12px;display:grid;grid-template-columns:1fr 380px;gap:16px}
+.products{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
+.card{background:#fff;border-radius:18px;padding:12px;box-shadow:0 2px 14px rgba(0,0,0,.06);display:flex;flex-direction:column;gap:8px;border:1px solid #eef}
+.card img{width:100%;height:120px;object-fit:cover;border-radius:12px}
+.badge{font-size:11px;background:#eef2ff;color:var(--blue);padding:3px 10px;border-radius:999px;font-weight:700;width:fit-content}
+.price-row{display:flex;gap:6px;flex-wrap:wrap}.price-opt{border:1.5px solid #ddd;border-radius:10px;padding:5px 10px;font-size:12px;cursor:pointer;background:#fafafa;display:flex;flex-direction:column;align-items:center;min-width:56px}.price-opt.active{border-color:var(--blue);background:var(--blue);color:#fff}
+.add-btn{margin-top:8px;background:var(--blue);color:#fff;border:none;padding:10px;border-radius:12px;font-weight:800;cursor:pointer;width:100%}
+.cart-panel{background:#fff;border-radius:20px;padding:16px;position:sticky;top:132px;height:fit-content;box-shadow:0 4px 24px rgba(0,0,0,.08);display:flex;flex-direction:column;max-height:82vh}
+.cart-items{flex:1;overflow:auto;display:flex;flex-direction:column;gap:8px;min-height:120px}
+.cart-item{display:flex;justify-content:space-between;align-items:center;background:#f8f9ff;border-radius:12px;padding:10px;font-size:13px}
+.qty{display:flex;gap:6px;align-items:center}.qty button{width:26px;height:26px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer;font-weight:700}
+.total{border-top:2px dashed #ddd;margin-top:14px;padding-top:12px;font-weight:800;display:flex;justify-content:space-between;font-size:18px}
+.order-btn{background:var(--red);color:#fff;border:none;width:100%;padding:14px;border-radius:14px;font-weight:800;margin-top:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}.order-btn:disabled{opacity:.4}
+.order-btn.site{background:var(--blue)} .order-btn.wa{background:#25D366}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:200;padding:16px}.modal.active{display:flex}
+.modal-box{background:#fff;border-radius:18px;padding:22px;max-width:440px;width:100%}.modal-box input,.modal-box textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:12px;margin-bottom:10px}
+.actions{display:flex;gap:10px;flex-wrap:wrap}.actions button{flex:1;padding:12px;border-radius:12px;border:none;font-weight:700;cursor:pointer;min-width:120px}
+@media(max-width:900px){.container{grid-template-columns:1fr}.cart-panel{position:fixed;bottom:0;left:0;right:0;top:auto;border-radius:20px 20px 0 0;max-height:75vh;z-index:90;transform:translateY(105%);transition:.35s}.cart-panel.open{transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="header"><div class="top"><div style="display:flex;align-items:center;gap:10px"><div id="shopLogo" style="width:52px;height:52px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0c2454;font-weight:800">أ</div><div><h1 id="shopName">كشري أفندينا</h1><p style="font-size:12px;opacity:.9" id="shopSub">الطعم اللي بيجمعنا</p></div></div><button class="cart-btn" onclick="toggleCart()">🛒 السلة <span class="cart-count" id="cartCount">0</span></button></div></div>
+<div class="contact-bar" id="contactBar">📞 01041707807 - خدمة التوصيل متاحة</div>
+<div class="categories" id="categories"></div>
+<div class="container"><div class="products" id="products"></div>
+<div class="cart-panel" id="cartPanel"><h2 style="display:flex;justify-content:space-between"><span>سلة الطلبات</span><span style="font-size:12px;cursor:pointer;color:#e63946" onclick="clearCart()">مسح الكل ✕</span></h2><div class="cart-items" id="cartItems"></div><div class="total"><span>الإجمالي</span><span id="total">0 جنيه</span></div>
+<button class="order-btn site" id="orderBtnSite" disabled onclick="openOrder('site')">✅ تأكيد على الموقع</button>
+<button class="order-btn wa" id="orderBtnWa" disabled onclick="openOrder('whatsapp')">💬 تأكيد على الواتساب</button>
+<p style="font-size:10px;color:#64748b;text-align:center;margin-top:8px">لو واتساب = الطلب يروح واتساب بس - لو موقع = يروح للوحة بس</p>
+</div></div>
+
+<div class="modal" id="orderModal"><div class="modal-box"><h3 id="modalTitle">بيانات التوصيل</h3><input id="custName" placeholder="الاسم"><input id="custPhone" placeholder="رقم الموبايل"><textarea id="custAddr" placeholder="العنوان"></textarea><textarea id="custNote" placeholder="ملاحظات"></textarea>
+<div class="actions">
+<button style="background:#eee" onclick="closeOrder()">إلغاء</button>
+<button id="modalActionBtn" style="background:#0c2454;color:#fff" onclick="sendOrder()">ارسال ✅</button>
+</div>
+<p id="orderStatus" style="font-size:11px;color:#64748b;margin-top:8px;text-align:center"></p>
+</div></div>
+
+<footer style="background:#0c2454;color:#fff;text-align:center;padding:22px 12px;margin-top:40px">
+<div>🍛 كشري أفندينا - جميع الحقوق محفوظة 2026</div>
+<div style="margin-top:12px;font-size:14px">تصميم وتطوير: <a href="https://mms805136-design.github.io/-mostafa-mohamed/" target="_blank" style="color:#fbbf24;font-weight:800;text-decoration:none">Mustafa Mohamed | مصطفى محمد</a> 🚀</div>
+<div style="margin-top:10px"><a href="https://mms805136-design.github.io/-mostafa-mohamed/" target="_blank" style="color:#fff;border:1px solid rgba(255,255,255,.4);padding:7px 18px;border-radius:999px;text-decoration:none;font-size:13px;display:inline-block;background:rgba(255,255,255,.08)">عايز موقع زي ده لمطعمك؟ كلمني 💬</a></div>
+</footer>
+
+<script>
+const SHEET_URL="https://script.google.com/macros/s/AKfycbyRrpjV4MS-nBdP88SzZx7XDdCIBamBlf2RqQv3vmVxNJnj21BubIdEX0oeSeEpr7dtFg/exec";
+const ITEMS=[{id:1,c:"الكشري",n:"ممتاز",p:[{l:"عادي",v:30}]},{id:2,c:"الكشري",n:"لوكس",p:[{l:"عادي",v:40}]},{id:3,c:"الكشري",n:"سبيشيال",p:[{l:"عادي",v:50}]},{id:4,c:"الكشري",n:"افندينا",p:[{l:"عادي",v:60}]},{id:5,c:"الكشري",n:"سوبر افندينا",p:[{l:"عادي",v:75}]},{id:6,c:"الكشري",n:"عائلي افندينا",p:[{l:"عادي",v:100}]},{id:7,c:"كشري ميكس",n:"كشري & طاجن ساده",p:[{l:"عادي",v:45}]},{id:8,c:"كشري ميكس",n:"كشري & طاجن لحمه",p:[{l:"عادي",v:70}]},{id:9,c:"كشري ميكس",n:"كشري & طاجن كبده",p:[{l:"عادي",v:70}]},{id:10,c:"كشري ميكس",n:"كشري & طاجن فراخ",p:[{l:"عادي",v:75}]},{id:11,c:"كشري ميكس",n:"كشري & طاجن سجق",p:[{l:"عادي",v:70}]},{id:12,c:"كشري لحوم",n:"كشري باللحمه",p:[{l:"صغير",v:60},{l:"كبير",v:80}]},{id:13,c:"كشري لحوم",n:"كشري بالكبده",p:[{l:"صغير",v:60},{l:"كبير",v:80}]},{id:14,c:"كشري لحوم",n:"كشري بالفراخ",p:[{l:"صغير",v:70},{l:"كبير",v:90}]},{id:15,c:"كشري لحوم",n:"كشري بالسجق",p:[{l:"صغير",v:60},{l:"كبير",v:80}]},{id:16,c:"الطواجن",n:"طاجن ساده",p:[{l:"عادي",v:35}]},{id:17,c:"الطواجن",n:"طاجن لحمه",p:[{l:"صغير",v:50},{l:"كبير",v:70}]},{id:18,c:"الطواجن",n:"طاجن كبده",p:[{l:"صغير",v:50},{l:"كبير",v:70}]},{id:19,c:"الطواجن",n:"طاجن فراخ",p:[{l:"صغير",v:55},{l:"كبير",v:70}]},{id:20,c:"الطواجن",n:"طاجن سجق",p:[{l:"صغير",v:50},{l:"كبير",v:70}]},{id:21,c:"طواجن موتزاريلا",n:"ساده موتزاريلا",p:[{l:"عادي",v:45}]},{id:22,c:"طواجن موتزاريلا",n:"اللحمه موتزاريلا",p:[{l:"صغير",v:60},{l:"كبير",v:80}]},{id:23,c:"طواجن موتزاريلا",n:"كبده موتزاريلا",p:[{l:"صغير",v:60},{l:"كبير",v:80}]},{id:24,c:"طواجن موتزاريلا",n:"فراخ موتزاريلا",p:[{l:"صغير",v:65},{l:"كبير",v:85}]},{id:25,c:"طواجن موتزاريلا",n:"سجق موتزاريلا",p:[{l:"صغير",v:60},{l:"كبير",v:80}]},{id:26,c:"اسباجتي",n:"اسباجتي ساده",p:[{l:"عادي",v:40}]},{id:27,c:"اسباجتي",n:"اسباجتي لحمه",p:[{l:"صغير",v:55},{l:"كبير",v:75}]},{id:28,c:"اسباجتي",n:"اسباجتي كبده",p:[{l:"صغير",v:55},{l:"كبير",v:75}]},{id:29,c:"اسباجتي",n:"اسباجتي فراخ",p:[{l:"صغير",v:60},{l:"كبير",v:80}]},{id:30,c:"اسباجتي",n:"اسباجتي سجق",p:[{l:"صغير",v:55},{l:"كبير",v:75}]},{id:31,c:"اسباجتي موتزاريلا",n:"ساده موتزاريلا",p:[{l:"عادي",v:50}]},{id:32,c:"اسباجتي موتزاريلا",n:"لحمه موتزاريلا",p:[{l:"صغير",v:65},{l:"كبير",v:85}]},{id:33,c:"اسباجتي موتزاريلا",n:"كبده موتزاريلا",p:[{l:"صغير",v:65},{l:"كبير",v:85}]},{id:34,c:"اسباجتي موتزاريلا",n:"فراخ موتزاريلا",p:[{l:"صغير",v:70},{l:"كبير",v:90}]},{id:35,c:"اسباجتي موتزاريلا",n:"سجق موتزاريلا",p:[{l:"صغير",v:65},{l:"كبير",v:85}]},{id:36,c:"وايت صوص",n:"وايت صوص ساده",p:[{l:"عادي",v:50}]},{id:37,c:"وايت صوص",n:"وايت صوص لحمه",p:[{l:"صغير",v:65},{l:"كبير",v:80}]},{id:38,c:"وايت صوص",n:"وايت صوص كبده",p:[{l:"صغير",v:65},{l:"كبير",v:80}]},{id:39,c:"وايت صوص",n:"وايت صوص فراخ",p:[{l:"صغير",v:70},{l:"كبير",v:90}]},{id:40,c:"وايت صوص",n:"وايت صوص سجق",p:[{l:"صغير",v:65},{l:"كبير",v:80}]},{id:41,c:"الفراخ الشوايه",n:"ربع فرخه وراك",p:[{l:"عادي",v:100}]},{id:42,c:"الفراخ الشوايه",n:"ربع فرخه صدر",p:[{l:"عادي",v:110}]},{id:43,c:"الفراخ الشوايه",n:"نصف فرخه",p:[{l:"عادي",v:180}]},{id:44,c:"الفراخ الشوايه",n:"فرخه كامله",p:[{l:"عادي",v:350}]},{id:45,c:"الحواوشي",n:"حواوشي لحمه بلدي",p:[{l:"عادي",v:80}]},{id:46,c:"الحواوشي",n:"حواوشي موتزاريلا",p:[{l:"عادي",v:100}]},{id:47,c:"حلو أفندينا",n:"رز بلبن ساده",p:[{l:"عادي",v:25}]},{id:48,c:"حلو أفندينا",n:"رز بلبن فرن",p:[{l:"عادي",v:30}]},{id:49,c:"حلو أفندينا",n:"رز بلبن قشطه عسل",p:[{l:"عادي",v:35}]},{id:51,c:"حلو أفندينا",n:"رز بلبن لوتس",p:[{l:"عادي",v:35}]},{id:52,c:"حلو أفندينا",n:"مهلبيه",p:[{l:"عادي",v:25}]},{id:53,c:"حلو أفندينا",n:"مهلبيه قشطه عسل",p:[{l:"عادي",v:35}]},{id:54,c:"اضافات الكشري",n:"عدس",p:[{l:"عادي",v:15}]},{id:55,c:"اضافات الكشري",n:"تقليه",p:[{l:"عادي",v:15}]},{id:56,c:"اضافات الكشري",n:"حمص",p:[{l:"عادي",v:15}]},{id:57,c:"اضافات الكشري",n:"صلصه",p:[{l:"عادي",v:10}]},{id:58,c:"اضافات الكشري",n:"عيش توست",p:[{l:"عادي",v:10}]},{id:59,c:"اضافات الكشري",n:"سلطه طماطم",p:[{l:"عادي",v:10}]},{id:60,c:"اضافات الكشري",n:"خيار مخلل",p:[{l:"عادي",v:10}]},{id:61,c:"اضافات الكشري",n:"شطه زيت",p:[{l:"عادي",v:5}]},{id:62,c:"اضافات الكشري",n:"دقه",p:[{l:"عادي",v:5}]},{id:63,c:"اضافات طواجن",n:"اضافه فراخ",p:[{l:"عادي",v:40}]},{id:64,c:"اضافات طواجن",n:"اضافه لحمه",p:[{l:"عادي",v:30}]},{id:65,c:"اضافات طواجن",n:"اضافه كبده",p:[{l:"عادي",v:30}]},{id:66,c:"اضافات طواجن",n:"اضافه سجق",p:[{l:"عادي",v:30}]},{id:67,c:"اضافات متنوعة",n:"توميه",p:[{l:"عادي",v:20}]},{id:68,c:"اضافات متنوعة",n:"مخلل",p:[{l:"عادي",v:10}]},{id:69,c:"اضافات متنوعة",n:"رز بسمتي",p:[{l:"عادي",v:30}]},{id:70,c:"مشروبات",n:"مياه صغيره",p:[{l:"عادي",v:10}]},{id:71,c:"مشروبات",n:"كانز كولا",p:[{l:"عادي",v:20}]},{id:72,c:"مشروبات",n:"كانز سفن",p:[{l:"عادي",v:20}]},{id:73,c:"مشروبات",n:"كانز بيبسي",p:[{l:"عادي",v:20}]}];
+const IMG={"الكشري":"https://images.unsplash.com/photo-1547592180-85f173990554?w=400","كشري ميكس":"https://images.unsplash.com/photo-1547592180-85f173990554?w=400","كشري لحوم":"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400","الطواجن":"https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400","طواجن موتزاريلا":"https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400","اسباجتي":"https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400","اسباجتي موتزاريلا":"https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400","وايت صوص":"https://images.unsplash.com/photo-1482049016688-2d3e1b31122f?w=400","الفراخ الشوايه":"https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400","الحواوشي":"https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400","حلو أفندينا":"https://images.unsplash.com/photo-1488477181946-64290103bbd6?w=400","اضافات الكشري":"https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400","اضافات طواجن":"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400","اضافات متنوعة":"https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400","مشروبات":"https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?w=400"};
+function getStore(k,d){try{let v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function setStore(k,v){localStorage.setItem(k,JSON.stringify(v))}
+let items=getStore('afandina_products', ITEMS);
+let settings=getStore('afandina_settings',{phone:'201041707807',contacts:['01041707807'],name:'كشري أفندينا',sub:'الطعم اللي بيجمعنا',logo:'',bg:''});
+if(!settings.contacts || settings.contacts.length===0){settings.contacts = settings.contact ? [settings.contact] : ['01041707807'];}
+function refreshContactBar(){
+let bar=document.getElementById('contactBar'); if(!bar) return;
+let nums = settings.contacts.filter(n=>n && n.trim()!=='');
+if(nums.length===0) nums=['01041707807'];
+bar.innerText = `📞 ${nums.join(' - ')} - خدمة التوصيل متاحة`;
+let nameEl=document.getElementById('shopName'); if(nameEl && settings.name) nameEl.innerText=settings.name;
+let subEl=document.getElementById('shopSub'); if(subEl && settings.sub) subEl.innerText=settings.sub;
+let logoEl=document.getElementById('shopLogo'); if(logoEl && settings.logo && settings.logo.length>20){logoEl.innerHTML=`<img src="${settings.logo}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;}
+// === الخلفية عادية 100% - مش شفافة - ده التعديل الوحيد ===
+if(settings.bg && settings.bg.length>20){
+  document.body.style.backgroundImage = `url('${settings.bg}')`;
+  document.body.style.backgroundSize = 'cover';
+  document.body.style.backgroundPosition = 'center';
+  document.body.style.backgroundAttachment = 'fixed';
+  document.body.style.backgroundRepeat = 'no-repeat';
+} else {
+  document.body.style.backgroundImage = 'none';
+  document.body.style.backgroundColor = 'var(--bg)';
+}
+}
+let activeCat="الكل";let cart=[];let selectedPrice={};let currentMode='site';
+function renderCats(){let cats=["الكل",...new Set(items.map(i=>i.c))];document.getElementById('categories').innerHTML=cats.map(c=>`<button class="cat-btn ${activeCat===c?'active':''}" onclick="setCat('${c}')">${c}</button>`).join('')}
+function setCat(c){activeCat=c;renderCats();renderProducts()}
+function renderProducts(){let f=activeCat==="الكل"?items:items.filter(i=>i.c===activeCat);document.getElementById('products').innerHTML=f.map(it=>{let sel=selectedPrice[it.id]??0;let opts=it.p.map((pr,idx)=>`<div class="price-opt ${sel===idx?'active':''}" onclick="selectPrice(${it.id},${idx})"><span>${pr.l}</span><b>${pr.v}ج</b></div>`).join('');let img=it.img || IMG[it.c] || IMG["الكشري"];return `<div class="card"><img src="${img}" loading="lazy"><span class="badge">${it.c}</span><h3>${it.n}</h3><div class="price-row">${opts}</div><button class="add-btn" onclick="addToCart(${it.id})">+ اضافه للسله</button></div>`}).join('')}
+function selectPrice(id,idx){selectedPrice[id]=idx;renderProducts()}
+function addToCart(id){let it=items.find(x=>x.id===id);let pi=selectedPrice[id]??0;let pr=it.p[pi];let key=id+'-'+pi;let ex=cart.find(c=>c.key===key);if(ex)ex.qty++;else cart.push({key,n:it.n+(pr.l!=='عادي'?' ('+pr.l+')':''),price:pr.v,qty:1});updateCart();document.getElementById('cartPanel').classList.add('open')}
+function updateCart(){document.getElementById('cartCount').innerText=cart.reduce((s,c)=>s+c.qty,0);let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);document.getElementById('total').innerText=tot+' جنيه';let dis=cart.length===0;document.getElementById('orderBtnSite').disabled=dis;document.getElementById('orderBtnWa').disabled=dis;let el=document.getElementById('cartItems');if(cart.length===0){el.innerHTML='<div style="text-align:center;padding:30px;color:#888">السلة فاضية</div>';return}el.innerHTML=cart.map((c,i)=>`<div class="cart-item"><div><b>${c.n}</b><br><small>${c.price}ج × ${c.qty} = ${c.price*c.qty}ج</small></div><div class="qty"><button onclick="changeQty(${i},-1)">-</button><span>${c.qty}</span><button onclick="changeQty(${i},1)">+</button></div></div>`).join('')}
+function changeQty(i,d){cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);updateCart()}
+function clearCart(){cart=[];updateCart()}
+function toggleCart(){document.getElementById('cartPanel').classList.toggle('open')}
+
+function openOrder(mode){
+if(cart.length===0)return;
+currentMode=mode;
+let title=document.getElementById('modalTitle');
+let btn=document.getElementById('modalActionBtn');
+if(mode==='site'){title.innerText='تأكيد الطلب على الموقع';btn.innerText='✅ ارسال على الموقع';btn.style.background='#0c2454';}
+else{title.innerText='تأكيد الطلب على الواتساب';btn.innerText='💬 ارسال واتساب';btn.style.background='#25D366';}
+document.getElementById('orderModal').classList.add('active');
+document.getElementById('orderStatus').innerText='';
+}
+function closeOrder(){document.getElementById('orderModal').classList.remove('active')}
+
+function sendOrder(){
+let name=document.getElementById('custName').value.trim()||'زبون';
+let phone=document.getElementById('custPhone').value.trim();
+let addr=document.getElementById('custAddr').value.trim();
+let note=document.getElementById('custNote').value.trim();
+if(!phone||!addr){alert('اكتب الموبايل والعنوان');return}
+let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);
+let id=Date.now();
+let lines=[];lines.push('*طلب جديد - كشري أفندينا*');lines.push('الاسم: '+name);lines.push('موبايل: '+phone);lines.push('العنوان: '+addr);if(note)lines.push('ملاحظات: '+note);lines.push('');cart.forEach(c=>lines.push('- '+c.n+' x'+c.qty+' = '+c.price*c.qty+'ج'));lines.push('');lines.push('الإجمالي: '+tot+' جنيه');let msg=lines.join('\n');
+
+if(currentMode==='site'){
+let orders=getStore('afandina_orders',[]);
+let o={id,name,phone,addr,note,cart:[...cart],total:tot,time:new Date().toLocaleString('ar-EG'),status:'جديد',source:'site'};
+orders.unshift(o);setStore('afandina_orders',orders);
+document.getElementById('orderStatus').innerText='جاري الحفظ على الموقع...';
+fetch(SHEET_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(o)}).then(()=>{
+document.getElementById('orderStatus').innerText='تم حفظ الطلب على الموقع ✅';
+setTimeout(()=>{cart=[];updateCart();closeOrder();alert('تم ارسال الطلب على الموقع ✅ هنكلمك حالا');},600);
+}).catch(()=>{document.getElementById('orderStatus').innerText='تم حفظ الطلب محليا ✅'; setTimeout(()=>{cart=[];updateCart();closeOrder();alert('تم ارسال الطلب على الموقع ✅');},600);});
+}else{
+document.getElementById('orderStatus').innerText='جاري فتح الواتساب...';
+window.open('https://wa.me/'+settings.phone+'?text='+encodeURIComponent(msg),'_blank');
+setTimeout(()=>{cart=[];updateCart();closeOrder();alert('تم فتح الواتساب ✅');},500);
+}
+}
+
+renderCats();renderProducts();updateCart();refreshContactBar();
+</script>
+</body>
+</html>
