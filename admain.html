@@ -38,8 +38,8 @@ table{width:100%;border-collapse:collapse;font-size:13px} th{background:#f8fafc;
 <h2>لوحة تحكم افندينا</h2>
 <p style="font-size:12px;color:#64748b;margin-bottom:12px">شاملة - خلفية + ضبط مصنع</p>
 <input type="password" id="passInput" placeholder="الباسورد">
-<button class="primary" style="width:100%;margin-top:10px" onclick="login()">دخول</button>
-<p style="font-size:11px;color:#94a3b8;margin-top:10px">الافتراضي: admin123</p>
+<button class="primary" style="width:100%;margin-top:10px" id="loginBtn" onclick="login()">دخول</button>
+<p id="loginError" style="font-size:12px;color:#e63946;margin-top:12px;font-weight:700;display:none"></p>
 </div></div>
 
 <div class="sidebar">
@@ -145,6 +145,7 @@ table{width:100%;border-collapse:collapse;font-size:13px} th{background:#f8fafc;
 <div class="card"><h3>🔐 الأمان</h3>
 <label>الباسورد الحالي</label><div style="display:flex;gap:8px"><input id="currentPassView" type="password" readonly><button class="gray" onclick="revealPass()">👁️ اظهار</button></div>
 <label style="margin-top:12px">باسورد جديد</label><input id="newPass" type="password"><input id="newPass2" type="password" placeholder="تأكيد"><button class="primary" style="width:100%;margin-top:8px" onclick="changePass()">حفظ مشفر ✅</button>
+<p id="securityInfo" style="font-size:11px;color:#64748b;margin-top:10px"></p>
 </div>
 </div>
 </div>
@@ -153,12 +154,77 @@ table{width:100%;border-collapse:collapse;font-size:13px} th{background:#f8fafc;
 const SHEET_URL="https://script.google.com/macros/s/AKfycbyRrpjV4MS-nBdP88SzZx7XDdCIBamBlf2RqQv3vmVxNJnj21BubIdEX0oeSeEpr7dtFg/exec";
 function _enc(t){return btoa(t.split('').reverse().join('')+'_afnd_2026')}
 function _dec(e){try{let s=atob(e);return s.slice(0,-10).split('').reverse().join('')}catch(_){return null}}
-const _DEFAULT_ENC="MzIxbWRhXzYyMDJfZG5mYV8=";
+const _DEFAULT_ENC="MzIxbW5pbWRhX2FmbmRfMjAyNg==";
 function getStore(k,d){try{let v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 function setStore(k,v){localStorage.setItem(k,JSON.stringify(v))}
 let tempPrices=[];let editingId=null;let tempImg='';let tempLogo='';let tempBg='';
 
-function login(){let p=document.getElementById('passInput').value.trim();let enc=getStore('afandina_pass_enc',_DEFAULT_ENC);let real=_dec(enc)||'admin123'; if(p===real){localStorage.setItem('afandina_login','1');document.getElementById('loginPage').classList.add('hidden');init();} else alert('غلط')}
+// --- نظام الحماية الجديد: 10 محاولات وقفل ساعة ---
+const MAX_ATTEMPTS = 10;
+const LOCK_TIME_MS = 60 * 60 * 1000;
+
+function checkLock(){
+  let lockUntil = parseInt(localStorage.getItem('afandina_lock_until') || '0');
+  let now = Date.now();
+  if(lockUntil && now < lockUntil){
+    let mins = Math.ceil((lockUntil - now)/60000);
+    return {locked:true, mins};
+  }else if(lockUntil && now >= lockUntil){
+    localStorage.removeItem('afandina_lock_until');
+    localStorage.removeItem('afandina_fail_count');
+    return {locked:false};
+  }
+  return {locked:false};
+}
+function updateLockUI(){
+  let lock = checkLock();
+  let btn = document.getElementById('loginBtn');
+  let err = document.getElementById('loginError');
+  if(lock.locked){
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    btn.innerText = `مقفل - حاول بعد ${lock.mins} دقيقة ⏳`;
+    err.style.display = 'block';
+    err.innerText = `⚠️ تم قفل لوحة التحكم بسبب 10 محاولات خاطئة. حاول بعد ${lock.mins} دقيقة.`;
+    return true;
+  }else{
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.innerText = 'دخول';
+    return false;
+  }
+}
+
+function login(){
+  if(updateLockUI()) return;
+  let p=document.getElementById('passInput').value.trim();
+  if(!p) return;
+  let enc=getStore('afandina_pass_enc',_DEFAULT_ENC);
+  let real=_dec(enc);
+  if(!real) real='admin123';
+
+  if(p===real){
+    localStorage.removeItem('afandina_fail_count');
+    localStorage.removeItem('afandina_lock_until');
+    localStorage.setItem('afandina_login','1');
+    document.getElementById('loginPage').classList.add('hidden');
+    init();
+  } else {
+    let fails = parseInt(localStorage.getItem('afandina_fail_count') || '0') + 1;
+    localStorage.setItem('afandina_fail_count', fails);
+    let err = document.getElementById('loginError');
+    err.style.display='block';
+    if(fails >= MAX_ATTEMPTS){
+      let lockUntil = Date.now() + LOCK_TIME_MS;
+      localStorage.setItem('afandina_lock_until', lockUntil);
+      err.innerText = `⛔ تم تجاوز ${MAX_ATTEMPTS} محاولات خاطئة. تم قفل اللوحة لمدة ساعة كاملة!`;
+      updateLockUI();
+      setTimeout(updateLockUI, 60000);
+    }else{
+      err.innerText = `❌ باسورد غلط! محاولة ${fails} من ${MAX_ATTEMPTS}. فاضل ${MAX_ATTEMPTS-fails} محاولات قبل القفل.`;
+    }
+  }
+}
 function logout(){localStorage.removeItem('afandina_login');location.reload()}
 function init(){
 let s=getStore('afandina_settings',{name:'كشري أفندينا',sub:'الطعم اللي بيجمعنا',phone:'201041707807',contacts:['01041707807'],logo:'',bg:''});
@@ -167,6 +233,9 @@ tempLogo=s.logo||''; if(tempLogo){let img=document.getElementById('logoPreview')
 tempBg=s.bg||''; if(tempBg){let img=document.getElementById('bgPreview');img.src=tempBg;img.style.display='block';}
 document.getElementById('msgTpl').value=getStore('afandina_msg_template',`*طلب جديد - كشري أفندينا* 🍛\n👤 {{name}}\n📱 {{phone}}\n📍 {{address}}\n📦 {{items}}\n💰 {{total}} جنيه`);
 renderNumbers(); updateContactPreview(); updateMsgPreview(); renderOrders(); renderProductsAdmin();
+let fails = localStorage.getItem('afandina_fail_count') || 0;
+let info = document.getElementById('securityInfo');
+if(info) info.innerText = `الحماية: ${fails} محاولات خاطئة حاليا من ${MAX_ATTEMPTS}. القفل لمدة ساعة بعد 10 محاولات.`;
 setInterval(()=>{ renderOrders(); }, 5000);
 }
 function showTab(t,btn){document.querySelectorAll('.tab-content').forEach(c=>c.classList.add('hidden'));document.getElementById('tab-'+t).classList.remove('hidden');document.querySelectorAll('.menu-btn').forEach(b=>b.classList.remove('active'));if(btn) btn.classList.add('active');}
@@ -282,9 +351,12 @@ function reSend(id){let o=getStore('afandina_orders',[]).find(x=>String(x.id)===
 function saveMsgTpl(){setStore('afandina_msg_template',document.getElementById('msgTpl').value);alert('تم ✅');updateMsgPreview()}
 function resetMsgTpl(){document.getElementById('msgTpl').value=`*طلب جديد - كشري أفندينا* 🍛\n👤 {{name}}\n📱 {{phone}}\n📍 {{address}}\n📦 {{items}}\n💰 {{total}} جنيه`;saveMsgTpl()}
 function updateMsgPreview(){let t=getStore('afandina_msg_template','');let el=document.getElementById('msgPreview');if(el)el.innerText=t.replace('{{name}}','أحمد').replace('{{phone}}','010...').replace('{{address}}','دمنهور').replace('{{items}}','- كشري x2').replace('{{total}}','190');}
-function revealPass(){let enc=getStore('afandina_pass_enc',_DEFAULT_ENC);let real=_dec(enc)||'admin123';document.getElementById('currentPassView').value=real;document.getElementById('currentPassView').type='text';alert('الباسورد: '+real)}
-function changePass(){let p1=document.getElementById('newPass').value.trim();let p2=document.getElementById('newPass2').value.trim();if(!p1||p1!==p2){alert('مش متطابق');return}let enc=_enc(p1);setStore('afandina_pass_enc',enc);alert('تم تغيير الباسورد ✅: '+p1)}
+function revealPass(){let enc=getStore('afandina_pass_enc',_DEFAULT_ENC);let real=_dec(enc)||'admin123';document.getElementById('currentPassView').value=real;document.getElementById('currentPassView').type='text';}
+function changePass(){let p1=document.getElementById('newPass').value.trim();let p2=document.getElementById('newPass2').value.trim();if(!p1||p1!==p2){alert('مش متطابق');return}let enc=_enc(p1);setStore('afandina_pass_enc',enc);alert('تم تغيير الباسورد ✅: '+p1); localStorage.removeItem('afandina_fail_count'); localStorage.removeItem('afandina_lock_until');}
 
+document.getElementById('passInput').addEventListener('keypress', function(e){ if(e.key==='Enter') login(); });
+
+if(checkLock().locked){ updateLockUI(); setInterval(updateLockUI, 60000); }
 if(localStorage.getItem('afandina_login')){document.getElementById('loginPage').classList.add('hidden');init();}
 </script>
 </body>
