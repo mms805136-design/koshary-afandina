@@ -55,99 +55,23 @@ table{width:100%;border-collapse:collapse;font-size:13px} th{background:#f8fafc;
 </div>
 
 <div class="main">
-<div id="tab-orders" class="tab-content">
-<div class="card"><h3>📦 الطلبات - تحكم كامل</h3>
-<div style="display:flex;gap:8px;flex-wrap:wrap">
-<button class="success" onclick="pullNewOnly()">🔄 سحب الجديد بس ✨</button>
-<button class="gray" onclick="pullAllFromSheet()">📋 سحب كل الطلبات</button>
-<button class="primary" onclick="renderOrders()">🔃 تحديث محلي</button>
-<button class="danger" onclick="clearAllOrders()">🗑️ مسح الكل</button>
-<span id="sheetStatus" style="font-size:11px;color:#64748b;line-height:36px"></span>
-</div>
-<p style="font-size:10px;color:#94a3b8;margin-top:8px">الطلبات اللي بتيجي على الموقع بتظهر هنا تلقائي بدون ما تدوس تحديث</p>
-</div>
-<div id="ordersList"></div>
-</div>
+<div id="tab-orders" class="tab-content"><div class="card"><h3>📦 الطلبات - تحكم كامل</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="success" onclick="pullNewOnly()">🔄 سحب الجديد بس ✨</button><button class="gray" onclick="pullAllFromSheet()">📋 سحب كل الطلبات</button><button class="primary" onclick="renderOrders()">🔃 تحديث محلي</button><button class="danger" onclick="clearAllOrders()">🗑️ مسح الكل</button><span id="sheetStatus" style="font-size:11px;color:#64748b;line-height:36px"></span></div></div><div id="ordersList"></div></div>
 
-<div id="tab-products" class="tab-content hidden">
-<div class="card"><h3>➕ إضافة منتج</h3>
-<img id="previewImg" class="img-preview">
-<label>📷 صورة المنتج</label><input type="file" accept="image/*" onchange="handleImg(this)">
-<label>اسم المنتج</label><input id="pName" placeholder="كشري افندينا">
-<label>القسم</label><input id="pCat" list="catsList" placeholder="الكشري">
-<datalist id="catsList"><option value="الكشري"><option value="كشري ميكس"><option value="الطواجن"><option value="مشروبات"><option value="الفراخ الشوايه"><option value="الحواوشي"></datalist>
-<div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end">
-<div><label>الحجم</label><input id="pSize" value="عادي"></div>
-<div><label>السعر</label><input id="pPrice" type="number" placeholder="30"></div>
-<div><button class="primary" onclick="addPriceTemp()" style="margin-bottom:10px">+ سعر</button></div>
-</div>
-<div id="priceTempList" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
-<div style="display:flex;gap:8px;flex-wrap:wrap">
-<button class="success" id="saveProdBtn" onclick="saveProduct()">💾 حفظ المنتج</button>
-<button class="gray" onclick="resetForm()">إلغاء</button>
-<button class="danger" onclick="clearAllProducts()">🗑️ مسح كل المنتجات</button>
-</div>
-</div>
-<div class="card"><h3>كل المنتجات (<span id="prodCount">0</span>)</h3><div class="grid" id="productsGrid"></div></div>
-</div>
+<div id="tab-products" class="tab-content hidden"><div class="card"><h3>➕ إضافة منتج</h3><img id="previewImg" class="img-preview"><label>📷 صورة المنتج</label><input type="file" accept="image/*" onchange="handleImg(this)"><label>اسم المنتج</label><input id="pName" placeholder="كشري افندينا"><label>القسم</label><input id="pCat" list="catsList" placeholder="الكشري"><datalist id="catsList"><option value="الكشري"><option value="كشري ميكس"><option value="الطواجن"><option value="مشروبات"><option value="الفراخ الشوايه"><option value="الحواوشي"><option value="كشري لحوم"><option value="طواجن موتزاريلا"><option value="اسباجتي"><option value="حلو أفندينا"></datalist><div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end"><div><label>الحجم</label><input id="pSize" value="عادي"></div><div><label>السعر</label><input id="pPrice" type="number" placeholder="30"></div><div><button class="primary" onclick="addPriceTemp()" style="margin-bottom:10px">+ سعر</button></div></div><div id="priceTempList" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="success" id="saveProdBtn" onclick="saveProduct()">💾 حفظ المنتج</button><button class="gray" onclick="resetForm()">إلغاء</button><button class="danger" onclick="clearAllProducts()">🗑️ مسح كل المنتجات</button></div></div><div class="card"><h3>كل المنتجات (<span id="prodCount">0</span>)</h3><div class="grid" id="productsGrid"></div></div></div>
 
-<div id="tab-settings" class="tab-content hidden">
-<div class="card"><h3>🏪 الإعدادات الشاملة</h3>
-<label>اسم المطعم</label><input id="sName">
-<label>الجملة تحت الاسم</label><input id="sSub">
-<label>📱 رقم واتساب استقبال الطلبات</label><input id="sPhone" placeholder="201041707807">
-<label>🅰️ لوجو المطعم</label>
-<img id="logoPreview" class="img-preview" style="height:100px;width:100px;border-radius:50%;margin:0 auto 10px;display:none">
-<input type="file" accept="image/*" onchange="handleLogo(this)">
-<label style="margin-top:18px">🖼️ خلفية الموقع - طربوش وكرسي فخم</label>
-<img id="bgPreview" class="img-preview" style="height:180px;display:none">
-<input type="file" accept="image/*" onchange="handleBg(this)">
-<p style="font-size:10px;color:#94a3b8;margin:6px 0">ارفع هنا صورة الطربوش والكرسي - هتظهر في موقع الزبون كخلفية شفافة فخمة تلقائي</p>
-<div style="display:flex;gap:8px"><button class="gray" onclick="resetBg()">🗑️ حذف الخلفية</button></div>
-<div style="display:flex;gap:8px;margin-top:18px">
-<button class="primary" onclick="saveSettings()">💾 حفظ كل الإعدادات ✅</button>
-<button class="gray" onclick="resetLogo()">حذف اللوجو</button>
-</div>
-</div>
-<div class="card"><h3>🔗 رابط الشيت</h3><input id="sSheetUrl"><button class="success" onclick="saveSheetUrl()">حفظ</button></div>
-<div class="card" style="border:2px solid #e63946;background:#fff5f5">
-<h3>⚠️ ضبط مصنع - إرجاع كل حاجة زي ما كانت</h3>
-<p style="font-size:11px;color:#64748b;margin-bottom:10px">لو حد لعب في المنتجات أو الأرقام أو الخلفية بالغلط، الزرار ده بيرجع كل حاجة للوضع الأصلي بتاع أفندينا.</p>
-<div style="display:flex;gap:8px;flex-wrap:wrap">
-<button class="danger" onclick="factoryResetAll()">🔄 ضبط مصنع كامل للوحة والموقع</button>
-<button class="gray" onclick="factoryResetProducts()">🍲 رجع المنتجات بس</button>
-<button class="gray" onclick="factoryResetSettings()">⚙️ رجع الإعدادات بس</button>
-</div>
-<p id="factoryStatus" style="font-size:11px;color:#e63946;margin-top:8px"></p>
-</div>
-</div>
+<div id="tab-settings" class="tab-content hidden"><div class="card"><h3>🏪 الإعدادات الشاملة</h3><label>اسم المطعم</label><input id="sName"><label>الجملة تحت الاسم</label><input id="sSub"><label>📱 رقم واتساب استقبال الطلبات</label><input id="sPhone" placeholder="201041707807"><label>🅰️ لوجو المطعم</label><img id="logoPreview" class="img-preview" style="height:100px;width:100px;border-radius:50%;margin:0 auto 10px;display:none"><input type="file" accept="image/*" onchange="handleLogo(this)"><label style="margin-top:18px">🖼️ خلفية الموقع - طربوش وكرسي فخم</label><img id="bgPreview" class="img-preview" style="height:180px;display:none"><input type="file" accept="image/*" onchange="handleBg(this)"><p style="font-size:10px;color:#94a3b8;margin:6px 0">ارفع هنا صورة الطربوش والكرسي - هتظهر في موقع الزبون كخلفية عادية 100% مش شفافة</p><div style="display:flex;gap:8px"><button class="gray" onclick="resetBg()">🗑️ حذف الخلفية</button></div><div style="display:flex;gap:8px;margin-top:18px"><button class="primary" onclick="saveSettings()">💾 حفظ كل الإعدادات ✅</button><button class="gray" onclick="resetLogo()">حذف اللوجو</button></div></div><div class="card"><h3>🔗 رابط الشيت</h3><input id="sSheetUrl"><button class="success" onclick="saveSheetUrl()">حفظ</button></div><div class="card" style="border:2px solid #e63946;background:#fff5f5"><h3>⚠️ ضبط مصنع - إرجاع كل حاجة زي ما كانت</h3><p style="font-size:11px;color:#64748b;margin-bottom:10px">هيرجع الباسورد لـ admin123 ويمسح عداد القفل ويرجع الـ 73 منتج الأصليين ويمسح الخلفية واللوجو.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="danger" onclick="factoryResetAll()">🔄 ضبط مصنع كامل للوحة والموقع</button><button class="gray" onclick="factoryResetProducts()">🍲 رجع الـ 73 منتج الأصلي</button><button class="gray" onclick="factoryResetSettings()">⚙️ رجع الإعدادات بس</button></div><p id="factoryStatus" style="font-size:11px;color:#e63946;margin-top:8px"></p></div></div>
 
-<div id="tab-numbers" class="tab-content hidden">
-<div class="card"><h3>📞 إدارة الأرقام - ضيف لحد 20 رقم</h3>
-<div id="numbersList"></div>
-<div style="display:flex;gap:8px;margin-top:12px">
-<button class="success" onclick="addNumberField()">➕ إضافة رقم جديد</button>
-<button class="primary" onclick="saveNumbers()">💾 حفظ الأرقام</button>
-</div>
-<p id="numbersStatus" style="font-size:11px;color:#16a34a;margin-top:8px"></p>
-</div>
-<div class="card"><h3>👁️ معاينة الشريط</h3><div id="contactPreview" style="background:#fff;padding:10px;border-radius:10px;text-align:center;font-size:12px;color:#0c2454;border:1px solid #e2e8f0"></div></div>
-</div>
+<div id="tab-numbers" class="tab-content hidden"><div class="card"><h3>📞 إدارة الأرقام - ضيف لحد 20 رقم</h3><div id="numbersList"></div><div style="display:flex;gap:8px;margin-top:12px"><button class="success" onclick="addNumberField()">➕ إضافة رقم جديد</button><button class="primary" onclick="saveNumbers()">💾 حفظ الأرقام</button></div><p id="numbersStatus" style="font-size:11px;color:#16a34a;margin-top:8px"></p></div><div class="card"><h3>👁️ معاينة الشريط</h3><div id="contactPreview" style="background:#fff;padding:10px;border-radius:10px;text-align:center;font-size:12px;color:#0c2454;border:1px solid #e2e8f0"></div></div></div>
 
-<div id="tab-whatsapp" class="tab-content hidden">
-<div class="card"><h3>💬 رسالة الواتساب</h3><textarea id="msgTpl" rows="10"></textarea><div style="display:flex;gap:8px"><button class="primary" onclick="saveMsgTpl()">حفظ</button><button class="gray" onclick="resetMsgTpl()">افتراضي</button></div><pre id="msgPreview" style="white-space:pre-wrap;font-size:11px;background:#f8fafc;padding:10px;border-radius:8px;margin-top:10px"></pre></div>
-</div>
+<div id="tab-whatsapp" class="tab-content hidden"><div class="card"><h3>💬 رسالة الواتساب</h3><textarea id="msgTpl" rows="10"></textarea><div style="display:flex;gap:8px"><button class="primary" onclick="saveMsgTpl()">حفظ</button><button class="gray" onclick="resetMsgTpl()">افتراضي</button></div><pre id="msgPreview" style="white-space:pre-wrap;font-size:11px;background:#f8fafc;padding:10px;border-radius:8px;margin-top:10px"></pre></div></div>
 
-<div id="tab-security" class="tab-content hidden">
-<div class="card"><h3>🔐 الأمان</h3>
-<label>الباسورد الحالي</label><div style="display:flex;gap:8px"><input id="currentPassView" type="password" readonly><button class="gray" onclick="revealPass()">👁️ اظهار</button></div>
-<label style="margin-top:12px">باسورد جديد</label><input id="newPass" type="password"><input id="newPass2" type="password" placeholder="تأكيد"><button class="primary" style="width:100%;margin-top:8px" onclick="changePass()">حفظ مشفر ✅</button>
-</div>
-</div>
+<div id="tab-security" class="tab-content hidden"><div class="card"><h3>🔐 الأمان</h3><label>الباسورد الحالي</label><div style="display:flex;gap:8px"><input id="currentPassView" type="password" readonly><button class="gray" onclick="revealPass()">👁️ اظهار</button></div><label style="margin-top:12px">باسورد جديد</label><input id="newPass" type="password"><input id="newPass2" type="password" placeholder="تأكيد"><button class="primary" style="width:100%;margin-top:8px" onclick="changePass()">حفظ مشفر ✅</button><p id="securityInfo" style="font-size:11px;color:#64748b;margin-top:10px"></p></div></div>
 </div>
 
 <script>
 const SHEET_URL="https://script.google.com/macros/s/AKfycbyRrpjV4MS-nBdP88SzZx7XDdCIBamBlf2RqQv3vmVxNJnj21BubIdEX0oeSeEpr7dtFg/exec";
+const DEFAULT_PRODUCTS=[{id:1,c:"الكشري",n:"ممتاز",p:[{l:"عادي",v:30}]},{id:2,c:"الكشري",n:"لوكس",p:[{l:"عادي",v:40}]},{id:3,c:"الكشري",n:"سبيشيال",p:[{l:"عادي",v:50}]},{id:4,c:"الكشري",n:"افندينا",p:[{l:"عادي",v:60}]},{id:5,c:"الكشري",n:"سوبر افندينا",p:[{l:"عادي",v:75}]},{id:6,c:"الكشري",n:"عائلي افندينا",p:[{l:"عادي",v:100}]},{id:7,c:"كشري ميكس",n:"كشري & طاجن ساده",p:[{l:"عادي",v:45}]},{id:8,c:"كشري ميكس",n:"كشري & طاجن لحمه",p:[{l:"عادي",v:70}]},{id:9,c:"كشري ميكس",n:"كشري & طاجن كبده",p:[{l:"عادي",v:70}]},{id:10,c:"كشري ميكس",n:"كشري & طاجن فراخ",p:[{l:"عادي",v:75}]},{id:11,c:"كشري ميكس",n:"كشري & طاجن سجق",p:[{l:"عادي",v:70}]},{id:12,c:"كشري لحوم",n:"كشري باللحمه",p:[{l:"صغير",v:60},{l:"كبير",v:80}]},{id:13,c:"كشري لحوم",n:"كشري بالكبده",p:[{l:"صغير",v:60},{l:"كبير",v:80}]},{id:14,c:"كشري لحوم",n:"كشري بالفراخ",p:[{l:"صغير",v:70},{l:"كبير",v:90}]},{id:15,c:"كشري لحوم",n:"كشري بالسجق",p:[{l:"صغير",v:60},{l:"كبير",v:80}]},{id:16,c:"الطواجن",n:"طاجن ساده",p:[{l:"عادي",v:35}]},{id:17,c:"الطواجن",n:"طاجن لحمه",p:[{l:"صغير",v:50},{l:"كبير",v:70}]},{id:18,c:"الطواجن",n:"طاجن كبده",p:[{l:"صغير",v:50},{l:"كبير",v:70}]},{id:19,c:"الطواجن",n:"طاجن فراخ",p:[{l:"صغير",v:55},{l:"كبير",v:70}]},{id:20,c:"الطواجن",n:"طاجن سجق",p:[{l:"صغير",v:50},{l:"كبير",v:70}]},{id:21,c:"طواجن موتزاريلا",n:"ساده موتزاريلا",p:[{l:"عادي",v:45}]},{id:22,c:"طواجن موتزاريلا",n:"اللحمه موتزاريلا",p:[{l:"صغير",v:60},{l:"كبير",v:80}]},{id:23,c:"طواجن موتزاريلا",n:"كبده موتزاريلا",p:[{l:"صغير",v:60},{l:"كبير",v:80}]},{id:24,c:"طواجن موتزاريلا",n:"فراخ موتزاريلا",p:[{l:"صغير",v:65},{l:"كبير",v:85}]},{id:25,c:"طواجن موتزاريلا",n:"سجق موتزاريلا",p:[{l:"صغير",v:60},{l:"كبير",v:80}]},{id:26,c:"اسباجتي",n:"اسباجتي ساده",p:[{l:"عادي",v:40}]},{id:27,c:"اسباجتي",n:"اسباجتي لحمه",p:[{l:"صغير",v:55},{l:"كبير",v:75}]},{id:28,c:"اسباجتي",n:"اسباجتي كبده",p:[{l:"صغير",v:55},{l:"كبير",v:75}]},{id:29,c:"اسباجتي",n:"اسباجتي فراخ",p:[{l:"صغير",v:60},{l:"كبير",v:80}]},{id:30,c:"اسباجتي",n:"اسباجتي سجق",p:[{l:"صغير",v:55},{l:"كبير",v:75}]},{id:31,c:"اسباجتي موتزاريلا",n:"ساده موتزاريلا",p:[{l:"عادي",v:50}]},{id:32,c:"اسباجتي موتزاريلا",n:"لحمه موتزاريلا",p:[{l:"صغير",v:65},{l:"كبير",v:85}]},{id:33,c:"اسباجتي موتزاريلا",n:"كبده موتزاريلا",p:[{l:"صغير",v:65},{l:"كبير",v:85}]},{id:34,c:"اسباجتي موتزاريلا",n:"فراخ موتزاريلا",p:[{l:"صغير",v:70},{l:"كبير",v:90}]},{id:35,c:"اسباجتي موتزاريلا",n:"سجق موتزاريلا",p:[{l:"صغير",v:65},{l:"كبير",v:85}]},{id:36,c:"وايت صوص",n:"وايت صوص ساده",p:[{l:"عادي",v:50}]},{id:37,c:"وايت صوص",n:"وايت صوص لحمه",p:[{l:"صغير",v:65},{l:"كبير",v:80}]},{id:38,c:"وايت صوص",n:"وايت صوص كبده",p:[{l:"صغير",v:65},{l:"كبير",v:80}]},{id:39,c:"وايت صوص",n:"وايت صوص فراخ",p:[{l:"صغير",v:70},{l:"كبير",v:90}]},{id:40,c:"وايت صوص",n:"وايت صوص سجق",p:[{l:"صغير",v:65},{l:"كبير",v:80}]},{id:41,c:"الفراخ الشوايه",n:"ربع فرخه وراك",p:[{l:"عادي",v:100}]},{id:42,c:"الفراخ الشوايه",n:"ربع فرخه صدر",p:[{l:"عادي",v:110}]},{id:43,c:"الفراخ الشوايه",n:"نصف فرخه",p:[{l:"عادي",v:180}]},{id:44,c:"الفراخ الشوايه",n:"فرخه كامله",p:[{l:"عادي",v:350}]},{id:45,c:"الحواوشي",n:"حواوشي لحمه بلدي",p:[{l:"عادي",v:80}]},{id:46,c:"الحواوشي",n:"حواوشي موتزاريلا",p:[{l:"عادي",v:100}]},{id:47,c:"حلو أفندينا",n:"رز بلبن ساده",p:[{l:"عادي",v:25}]},{id:48,c:"حلو أفندينا",n:"رز بلبن فرن",p:[{l:"عادي",v:30}]},{id:49,c:"حلو أفندينا",n:"رز بلبن قشطه عسل",p:[{l:"عادي",v:35}]},{id:51,c:"حلو أفندينا",n:"رز بلبن لوتس",p:[{l:"عادي",v:35}]},{id:52,c:"حلو أفندينا",n:"مهلبيه",p:[{l:"عادي",v:25}]},{id:53,c:"حلو أفندينا",n:"مهلبيه قشطه عسل",p:[{l:"عادي",v:35}]},{id:54,c:"اضافات الكشري",n:"عدس",p:[{l:"عادي",v:15}]},{id:55,c:"اضافات الكشري",n:"تقليه",p:[{l:"عادي",v:15}]},{id:56,c:"اضافات الكشري",n:"حمص",p:[{l:"عادي",v:15}]},{id:57,c:"اضافات الكشري",n:"صلصه",p:[{l:"عادي",v:10}]},{id:58,c:"اضافات الكشري",n:"عيش توست",p:[{l:"عادي",v:10}]},{id:59,c:"اضافات الكشري",n:"سلطه طماطم",p:[{l:"عادي",v:10}]},{id:60,c:"اضافات الكشري",n:"خيار مخلل",p:[{l:"عادي",v:10}]},{id:61,c:"اضافات الكشري",n:"شطه زيت",p:[{l:"عادي",v:5}]},{id:62,c:"اضافات الكشري",n:"دقه",p:[{l:"عادي",v:5}]},{id:63,c:"اضافات طواجن",n:"اضافه فراخ",p:[{l:"عادي",v:40}]},{id:64,c:"اضافات طواجن",n:"اضافه لحمه",p:[{l:"عادي",v:30}]},{id:65,c:"اضافات طواجن",n:"اضافه كبده",p:[{l:"عادي",v:30}]},{id:66,c:"اضافات طواجن",n:"اضافه سجق",p:[{l:"عادي",v:30}]},{id:67,c:"اضافات متنوعة",n:"توميه",p:[{l:"عادي",v:20}]},{id:68,c:"اضافات متنوعة",n:"مخلل",p:[{l:"عادي",v:10}]},{id:69,c:"اضافات متنوعة",n:"رز بسمتي",p:[{l:"عادي",v:30}]},{id:70,c:"مشروبات",n:"مياه صغيره",p:[{l:"عادي",v:10}]},{id:71,c:"مشروبات",n:"كانز كولا",p:[{l:"عادي",v:20}]},{id:72,c:"مشروبات",n:"كانز سفن",p:[{l:"عادي",v:20}]},{id:73,c:"مشروبات",n:"كانز بيبسي",p:[{l:"عادي",v:20}]}];
+
 function _enc(t){return btoa(t.split('').reverse().join('')+'_afnd_2026')}
 function _dec(e){try{let s=atob(e);return s.slice(0,-10).split('').reverse().join('')}catch(_){return null}}
 const _DEFAULT_ENC="MzIxbmltZGFfYWZuZF8yMDI2";
@@ -158,26 +82,25 @@ let tempPrices=[];let editingId=null;let tempImg='';let tempLogo='';let tempBg='
 const MAX_ATTEMPTS=10;const LOCK_TIME_MS=60*60*1000;
 
 function checkLock(){
-  let lockUntil=parseInt(localStorage.getItem('afandina_lock_until')||'0');
-  let now=Date.now();
-  if(lockUntil && now<lockUntil){return{locked:true,mins:Math.ceil((lockUntil-now)/60000)}}
-  if(lockUntil && now>=lockUntil){localStorage.removeItem('afandina_lock_until');localStorage.removeItem('afandina_fail_count');return{locked:false}}
-  return{locked:false}
+  let until=parseInt(localStorage.getItem('afandina_lock_until')||'0');
+  if(until && Date.now()<until) return {locked:true,mins:Math.ceil((until-Date.now())/60000)};
+  if(until && Date.now()>=until){localStorage.removeItem('afandina_lock_until');localStorage.removeItem('afandina_fail_count');}
+  return {locked:false}
 }
 function updateLockUI(){
-  let lock=checkLock();
-  let btn=document.getElementById('loginBtn');
-  let err=document.getElementById('loginError');
-  if(lock.locked){btn.disabled=true;btn.style.opacity='0.5';btn.innerText=`مقفل ${lock.mins} د`;err.style.display='block';err.innerText=`⛔ مقفول بسبب 10 محاولات غلط. حاول بعد ${lock.mins} دقيقة.`;return true}
+  let l=checkLock();let btn=document.getElementById('loginBtn');let err=document.getElementById('loginError');
+  if(l.locked){btn.disabled=true;btn.style.opacity='.5';btn.innerText=`مقفل ${l.mins} د`;err.style.display='block';err.innerText=`⛔ مقفول ${l.mins} دقيقة بسبب 10 محاولات غلط`;return true}
   btn.disabled=false;btn.style.opacity='1';btn.innerText='دخول';return false
 }
 function login(){
   if(updateLockUI()) return;
   let p=document.getElementById('passInput').value.trim();
   if(!p) return;
-  let enc=getStore('afandina_pass_enc',_DEFAULT_ENC);
-  if(enc===_OLD_BAD_ENC){enc=_DEFAULT_ENC;setStore('afandina_pass_enc',enc)}
-  let real=_dec(enc)||'admin123';
+  let stored=localStorage.getItem('afandina_pass_enc');
+  let real='admin123';
+  if(stored){
+    try{let enc=JSON.parse(stored); if(enc===_OLD_BAD_ENC) real='admin123'; else {let dec=_dec(enc); if(dec) real=dec;}}catch(_){}
+  }
   if(p===real){
     localStorage.removeItem('afandina_fail_count');localStorage.removeItem('afandina_lock_until');
     localStorage.setItem('afandina_login','1');document.getElementById('loginPage').classList.add('hidden');init();
@@ -197,6 +120,7 @@ tempLogo=s.logo||''; if(tempLogo){let img=document.getElementById('logoPreview')
 tempBg=s.bg||''; if(tempBg){let img=document.getElementById('bgPreview');img.src=tempBg;img.style.display='block';}
 document.getElementById('msgTpl').value=getStore('afandina_msg_template',`*طلب جديد - كشري أفندينا* 🍛\n👤 {{name}}\n📱 {{phone}}\n📍 {{address}}\n📦 {{items}}\n💰 {{total}} جنيه`);
 renderNumbers(); updateContactPreview(); updateMsgPreview(); renderOrders(); renderProductsAdmin();
+let info=document.getElementById('securityInfo'); if(info){info.innerText=`محاولات فاشلة حاليا: ${localStorage.getItem('afandina_fail_count')||0} / ${MAX_ATTEMPTS}`}
 setInterval(()=>{ renderOrders(); }, 5000);
 }
 function showTab(t,btn){document.querySelectorAll('.tab-content').forEach(c=>c.classList.add('hidden'));document.getElementById('tab-'+t).classList.remove('hidden');document.querySelectorAll('.menu-btn').forEach(b=>b.classList.remove('active'));if(btn) btn.classList.add('active');}
@@ -207,12 +131,17 @@ function resetLogo(){tempLogo='';document.getElementById('logoPreview').style.di
 function resetBg(){tempBg='';document.getElementById('bgPreview').style.display='none';let s=getStore('afandina_settings',{});s.bg='';setStore('afandina_settings',s);alert('تم حذف الخلفية ✅');}
 function addPriceTemp(){let size=document.getElementById('pSize').value.trim()||'عادي';let price=parseInt(document.getElementById('pPrice').value);if(!price)return;tempPrices.push({l:size,v:price});document.getElementById('pPrice').value='';renderTempPrices()}
 function renderTempPrices(){document.getElementById('priceTempList').innerHTML=tempPrices.map((p,i)=>`<span class="badge">${p.l}: ${p.v}ج <b onclick="tempPrices.splice(${i},1);renderTempPrices()" style="cursor:pointer">✕</b></span>`).join('')}
-function saveProduct(){let name=document.getElementById('pName').value.trim();let cat=document.getElementById('pCat').value.trim();let priceVal=document.getElementById('pPrice').value.trim();let sizeVal=document.getElementById('pSize').value.trim()||'عادي';if(tempPrices.length===0 && priceVal){tempPrices.push({l:sizeVal,v:parseInt(priceVal)})}if(!name||!cat||tempPrices.length===0){alert('اكمل البيانات - اكتب الاسم والقسم ودوس + سعر');return}let products=getStore('afandina_products',[]);if(editingId){let idx=products.findIndex(p=>String(p.id)===String(editingId));if(idx>-1){products[idx]={...products[idx],n:name,c:cat,p:[...tempPrices],img:tempImg||products[idx].img}}editingId=null;}else{products.push({id:Date.now(),c:cat,n:name,p:[...tempPrices],img:tempImg})}setStore('afandina_products',products);resetForm();renderProductsAdmin();alert('تم ✅');}
+function saveProduct(){let name=document.getElementById('pName').value.trim();let cat=document.getElementById('pCat').value.trim();let priceVal=document.getElementById('pPrice').value.trim();let sizeVal=document.getElementById('pSize').value.trim()||'عادي';if(tempPrices.length===0 && priceVal){tempPrices.push({l:sizeVal,v:parseInt(priceVal)})}if(!name||!cat||tempPrices.length===0){alert('اكمل البيانات');return}let products=getStore('afandina_products',null);if(!products || products.length===0) products=[...DEFAULT_PRODUCTS];if(editingId){let idx=products.findIndex(p=>String(p.id)===String(editingId));if(idx>-1){products[idx]={...products[idx],n:name,c:cat,p:[...tempPrices],img:tempImg||products[idx].img}}editingId=null;}else{products.push({id:Date.now(),c:cat,n:name,p:[...tempPrices],img:tempImg})}setStore('afandina_products',products);resetForm();renderProductsAdmin();alert('تم ✅');}
 function resetForm(){document.getElementById('pName').value='';document.getElementById('pCat').value='';document.getElementById('pSize').value='عادي';document.getElementById('pPrice').value='';tempPrices=[];tempImg='';editingId=null;document.getElementById('previewImg').style.display='none';document.getElementById('saveProdBtn').innerText='💾 حفظ المنتج';renderTempPrices()}
-function renderProductsAdmin(){let products=getStore('afandina_products',[]);document.getElementById('prodCount').innerText=products.length;document.getElementById('productsGrid').innerHTML=products.map(p=>`<div class="prod-card"><img src="${p.img||'https://via.placeholder.com/300x200?text='+encodeURIComponent(p.n)}"><div style="padding:10px"><span class="badge">${p.c}</span><h4>${p.n}</h4><small>${p.p.map(pr=>pr.l+':'+pr.v+'ج').join(' | ')}</small><div style="display:flex;gap:6px;margin-top:8px"><button class="primary" style="flex:1" onclick="editProd('${p.id}')">تعديل</button><button class="danger" style="flex:1" onclick="delProd('${p.id}')">حذف</button></div></div></div>`).join('')||'<div class="card">مفيش منتجات</div>';}
-function editProd(id){let p=getStore('afandina_products',[]).find(x=>String(x.id)===String(id));if(!p)return;document.getElementById('pName').value=p.n;document.getElementById('pCat').value=p.c;tempPrices=[...p.p];tempImg=p.img||'';editingId=id;if(tempImg){let img=document.getElementById('previewImg');img.src=tempImg;img.style.display='block';}document.getElementById('saveProdBtn').innerText='💾 تحديث';renderTempPrices();}
-function delProd(id){if(!confirm('تحذف المنتج؟'))return;setStore('afandina_products',getStore('afandina_products',[]).filter(p=>String(p.id)!==String(id)));renderProductsAdmin()}
-function clearAllProducts(){if(!confirm('تمسح كل المنتجات؟'))return;setStore('afandina_products',[]);renderProductsAdmin();alert('تم مسح الكل ✅');}
+function renderProductsAdmin(){
+  let products=getStore('afandina_products',null);
+  if(!products || products.length===0){products=[...DEFAULT_PRODUCTS]; setStore('afandina_products',products);}
+  document.getElementById('prodCount').innerText=products.length;
+  document.getElementById('productsGrid').innerHTML=products.map(p=>`<div class="prod-card"><img src="${p.img||'https://via.placeholder.com/300x200?text='+encodeURIComponent(p.n)}"><div style="padding:10px"><span class="badge">${p.c}</span><h4>${p.n}</h4><small>${p.p.map(pr=>pr.l+':'+pr.v+'ج').join(' | ')}</small><div style="display:flex;gap:6px;margin-top:8px"><button class="primary" style="flex:1" onclick="editProd('${p.id}')">تعديل</button><button class="danger" style="flex:1" onclick="delProd('${p.id}')">حذف</button></div></div></div>`).join('');
+}
+function editProd(id){let p=getStore('afandina_products',DEFAULT_PRODUCTS).find(x=>String(x.id)===String(id));if(!p)return;document.getElementById('pName').value=p.n;document.getElementById('pCat').value=p.c;tempPrices=[...p.p];tempImg=p.img||'';editingId=id;if(tempImg){let img=document.getElementById('previewImg');img.src=tempImg;img.style.display='block';}document.getElementById('saveProdBtn').innerText='💾 تحديث';renderTempPrices();}
+function delProd(id){if(!confirm('تحذف المنتج؟'))return;let list=getStore('afandina_products',DEFAULT_PRODUCTS).filter(p=>String(p.id)!==String(id));setStore('afandina_products',list);renderProductsAdmin()}
+function clearAllProducts(){if(!confirm('تمسح كل المنتجات وترجع للأصلي بعد الريفرش؟'))return;localStorage.removeItem('afandina_products');renderProductsAdmin();alert('تم - رجعنا الأصلي ✅');}
 function renderNumbers(){let s=getStore('afandina_settings',{contacts:['01041707807']});let contacts=s.contacts||['01041707807'];document.getElementById('numbersList').innerHTML=contacts.map((num,i)=>`<div class="num-row"><span style="font-weight:700;color:var(--blue)">#${i+1}</span><input type="text" value="${num}" id="num-${i}" oninput="updateContactPreview()"><button class="danger" style="padding:6px 10px" onclick="removeNumber(${i})">✕</button></div>`).join('');updateContactPreview();}
 function addNumberField(){let s=getStore('afandina_settings',{});s.contacts=s.contacts||['01041707807'];s.contacts.push('');setStore('afandina_settings',s);renderNumbers();}
 function removeNumber(i){let s=getStore('afandina_settings',{});s.contacts.splice(i,1);if(s.contacts.length===0)s.contacts=[''];setStore('afandina_settings',s);renderNumbers();}
@@ -220,11 +149,44 @@ function saveNumbers(){let inputs=document.querySelectorAll('[id^="num-"]');let 
 function updateContactPreview(){let inputs=document.querySelectorAll('[id^="num-"]');let nums=[];inputs.forEach(inp=>{if(inp.value.trim())nums.push(inp.value.trim())});let s=getStore('afandina_settings',{});if(nums.length===0)nums=s.contacts||['01041707807'];document.getElementById('contactPreview').innerText=nums.length>0?`📞 ${nums.join(' - ')} - خدمة التوصيل متاحة`:'📞 01041707807';}
 function saveSettings(){let s=getStore('afandina_settings',{});s.name=document.getElementById('sName').value.trim()||'كشري أفندينا';s.sub=document.getElementById('sSub').value.trim();s.phone=document.getElementById('sPhone').value.trim()||'201041707807';s.logo=tempLogo||s.logo||'';s.bg=tempBg||s.bg||'';setStore('afandina_settings',s);alert('تم حفظ كل الإعدادات والخلفية ✅');}
 function saveSheetUrl(){setStore('afandina_sheet_url',document.getElementById('sSheetUrl').value.trim());alert('تم حفظ رابط الشيت ✅')}
-function factoryResetAll(){if(!confirm('⚠️ متأكد عايز ترجع كل حاجة زي ما كانت؟')) return;if(!confirm('تأكيد أخير؟')) return;localStorage.removeItem('afandina_products');localStorage.removeItem('afandina_settings');localStorage.removeItem('afandina_orders');localStorage.removeItem('afandina_msg_template');localStorage.removeItem('afandina_sheet_url');setStore('afandina_settings',{name:'كشري أفندينا',sub:'الطعم اللي بيجمعنا',phone:'201041707807',contacts:['01041707807'],logo:'',bg:''});document.getElementById('factoryStatus').innerText='تم ضبط المصنع الكامل ✅ جاري الريفرش...';setTimeout(()=>location.reload(),800);}
-function factoryResetProducts(){if(!confirm('ترجع المنيو الأصلي؟')) return;localStorage.removeItem('afandina_products');document.getElementById('factoryStatus').innerText='تم إرجاع المنتجات الأصلية ✅';setTimeout(()=>{renderProductsAdmin(); alert('تم ✅');},300);}
-function factoryResetSettings(){if(!confirm('ترجع الإعدادات الأصلية؟')) return;localStorage.removeItem('afandina_settings');setStore('afandina_settings',{name:'كشري أفندينا',sub:'الطعم اللي بيجمعنا',phone:'201041707807',contacts:['01041707807'],logo:'',bg:''});tempLogo=''; tempBg=''; document.getElementById('logoPreview').style.display='none';document.getElementById('bgPreview').style.display='none';document.getElementById('factoryStatus').innerText='تم إرجاع الإعدادات ✅';alert('تم ✅');}
+
+function factoryResetAll(){
+if(!confirm('⚠️ متأكد؟ هيرجع كل حاجة: الباسورد لـ admin123 + الـ 73 منتج + يمسح الخلفية والأرقام والطلبات')) return;
+if(!confirm('تأكيد أخير؟')) return;
+localStorage.removeItem('afandina_products');
+localStorage.removeItem('afandina_settings');
+localStorage.removeItem('afandina_orders');
+localStorage.removeItem('afandina_msg_template');
+localStorage.removeItem('afandina_sheet_url');
+localStorage.removeItem('afandina_pass_enc');
+localStorage.removeItem('afandina_fail_count');
+localStorage.removeItem('afandina_lock_until');
+localStorage.removeItem('afandina_login');
+setStore('afandina_settings',{name:'كشري أفندينا',sub:'الطعم اللي بيجمعنا',phone:'201041707807',contacts:['01041707807'],logo:'',bg:''});
+setStore('afandina_products',DEFAULT_PRODUCTS);
+document.getElementById('factoryStatus').innerText='تم ضبط المصنع الكامل ✅ الباسورد رجع admin123 والـ 73 منتج رجعوا - جاري الريفرش...';
+setTimeout(()=>location.reload(),900);
+}
+function factoryResetProducts(){
+if(!confirm('ترجع الـ 73 منتج الأصلي بتوع أفندينا؟')) return;
+setStore('afandina_products',DEFAULT_PRODUCTS);
+document.getElementById('factoryStatus').innerText='تم إرجاع الـ 73 منتج الأصلي ✅';
+renderProductsAdmin();
+alert('تم رجوع الـ 73 منتج ✅');
+}
+function factoryResetSettings(){
+if(!confirm('ترجع الإعدادات الأصلية - الاسم والخلفية والأرقام؟')) return;
+localStorage.removeItem('afandina_settings');
+setStore('afandina_settings',{name:'كشري أفندينا',sub:'الطعم اللي بيجمعنا',phone:'201041707807',contacts:['01041707807'],logo:'',bg:''});
+tempLogo=''; tempBg=''; 
+document.getElementById('logoPreview').style.display='none';
+document.getElementById('bgPreview').style.display='none';
+document.getElementById('factoryStatus').innerText='تم إرجاع الإعدادات ✅';
+alert('تم ✅');
+}
+
 function renderOrders(){let orders=getStore('afandina_orders',[]);if(orders.length===0){document.getElementById('ordersList').innerHTML='<div class="card" style="text-align:center;color:#94a3b8">مفيش طلبات</div>';return}document.getElementById('ordersList').innerHTML=orders.map(o=>`<div class="card"><div style="display:flex;justify-content:space-between;flex-wrap:wrap"><h4>#${o.id} - ${o.name} - ${o.phone}</h4><span class="badge" style="${o.status==='تم'?'background:#dcfce7;color:#166534':''}">${o.status||'جديد'}</span></div><small>${o.time||''} - ${o.addr||''} ${o.note?'- '+o.note:''}</small><table style="margin-top:8px"><tr><th>الصنف</th><th>كمية</th><th>سعر</th></tr>${o.cart.map(c=>`<tr><td>${c.n}</td><td>${c.qty}</td><td>${c.price*c.qty}ج</td></tr>`).join('')}</table><div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:8px"><b>الإجمالي: ${o.total}ج</b><div style="display:flex;gap:6px"><button class="success" onclick="updateStatus('${o.id}','تم')">✅ تم</button><button class="primary" style="background:#25D366" onclick="reSend('${o.id}')">واتساب</button><button class="danger" onclick="delOrder('${o.id}')">حذف</button></div></div></div>`).join('');}
-function updateStatus(id,status){let orders=getStore('afandina_orders',[]);let idx=orders.findIndex(x=>String(x.id)===String(id));if(idx>-1){orders[idx].status=status;setStore('afandina_orders',orders);renderOrders();}}
+function updateStatus(id,status){let orders=getStore('afandina_orders',[]);let idx=orders.findIndex(x=>String(x.id)===String(id));if(idx>-1){orders[idx].status=status;setStore('afandina_orders',orders);renderOrders();document.getElementById('sheetStatus').innerText='تم تحديث الطلب لـ '+status+' ✅';}}
 function delOrder(id){if(!confirm('تحذف الطلب ده؟'))return;setStore('afandina_orders',getStore('afandina_orders',[]).filter(o=>String(o.id)!==String(id)));renderOrders()}
 function clearAllOrders(){if(!confirm('تمسح كل الطلبات؟'))return;setStore('afandina_orders',[]);renderOrders();}
 async function pullNewOnly(){let url=getStore('afandina_sheet_url',SHEET_URL);document.getElementById('sheetStatus').innerText='جاري سحب الجديد بس...';try{let res=await fetch(url+'?action=getOrders');let data=await res.json();if(!Array.isArray(data)){document.getElementById('sheetStatus').innerText='الشيت فاضي';return}let localOrders=getStore('afandina_orders',[]);let localIds=new Set(localOrders.map(o=>String(o.id)));let newOnly=data.filter(o=>!localIds.has(String(o.id)));if(newOnly.length===0){document.getElementById('sheetStatus').innerText='مفيش طلبات جديدة ✅';return}let merged=[...newOnly.reverse(),...localOrders];setStore('afandina_orders',merged);renderOrders();document.getElementById('sheetStatus').innerText=`تم سحب ${newOnly.length} طلب جديد بس ✨`;}catch(e){document.getElementById('sheetStatus').innerText='فشل';}}
@@ -233,7 +195,7 @@ function reSend(id){let o=getStore('afandina_orders',[]).find(x=>String(x.id)===
 function saveMsgTpl(){setStore('afandina_msg_template',document.getElementById('msgTpl').value);alert('تم ✅');updateMsgPreview()}
 function resetMsgTpl(){document.getElementById('msgTpl').value=`*طلب جديد - كشري أفندينا* 🍛\n👤 {{name}}\n📱 {{phone}}\n📍 {{address}}\n📦 {{items}}\n💰 {{total}} جنيه`;saveMsgTpl()}
 function updateMsgPreview(){let t=getStore('afandina_msg_template','');let el=document.getElementById('msgPreview');if(el)el.innerText=t.replace('{{name}}','أحمد').replace('{{phone}}','010...').replace('{{address}}','دمنهور').replace('{{items}}','- كشري x2').replace('{{total}}','190');}
-function revealPass(){let enc=getStore('afandina_pass_enc',_DEFAULT_ENC);let real=_dec(enc)||'admin123';document.getElementById('currentPassView').value=real;document.getElementById('currentPassView').type='text';}
+function revealPass(){let stored=localStorage.getItem('afandina_pass_enc');let real='admin123';if(stored){try{let dec=_dec(JSON.parse(stored)); if(dec) real=dec;}catch(_){}}document.getElementById('currentPassView').value=real;document.getElementById('currentPassView').type='text';}
 function changePass(){let p1=document.getElementById('newPass').value.trim();let p2=document.getElementById('newPass2').value.trim();if(!p1||p1!==p2){alert('مش متطابق');return}let enc=_enc(p1);setStore('afandina_pass_enc',enc);alert('تم تغيير الباسورد ✅: '+p1);localStorage.removeItem('afandina_fail_count');localStorage.removeItem('afandina_lock_until');}
 document.getElementById('passInput').addEventListener('keypress', e=>{if(e.key==='Enter') login()});
 if(checkLock().locked){updateLockUI();setInterval(updateLockUI,60000)}
