@@ -31,7 +31,8 @@ body{background:var(--bg)} .header{background:linear-gradient(135deg,var(--blue)
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:200;padding:16px}.modal.active{display:flex}
 .modal-box{background:#fff;border-radius:18px;padding:22px;max-width:440px;width:100%}.modal-box input,.modal-box textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:12px;margin-bottom:10px}
 .actions{display:flex;gap:10px;flex-wrap:wrap}.actions button{flex:1;padding:12px;border-radius:12px;border:none;font-weight:700;cursor:pointer;min-width:120px}
-@media(max-width:900px){.container{grid-template-columns:1fr}.cart-panel{position:fixed;bottom:0;left:0;right:0;top:auto;border-radius:20px 20px 0 0;max-height:75vh;z-index:90;transform:translateY(105%);transition:.35s}.cart-panel.open{transform:translateY(0)}}
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:89;display:none}.cart-overlay.show{display:block}
+@media(max-width:900px){.container{grid-template-columns:1fr}.cart-panel{position:fixed;bottom:0;left:0;right:0;top:auto;border-radius:20px 20px 0 0;max-height:65vh;z-index:90;transform:translateY(105%);transition:.35s}.cart-panel.open{transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -39,7 +40,8 @@ body{background:var(--bg)} .header{background:linear-gradient(135deg,var(--blue)
 <div class="contact-bar" id="contactBar">📞 01041707807 - خدمة التوصيل متاحة</div>
 <div class="categories" id="categories"></div>
 <div class="container"><div class="products" id="products"></div>
-<div class="cart-panel" id="cartPanel"><h2 style="display:flex;justify-content:space-between"><span>سلة الطلبات</span><span style="font-size:12px;cursor:pointer;color:#e63946" onclick="clearCart()">مسح الكل ✕</span></h2><div class="cart-items" id="cartItems"></div><div class="total"><span>الإجمالي</span><span id="total">0 جنيه</span></div>
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-panel" id="cartPanel"><h2 style="display:flex;justify-content:space-between;align-items:center"><span>سلة الطلبات</span><span style="display:flex;gap:14px"><span style="font-size:12px;cursor:pointer;color:#e63946" onclick="clearCart()">مسح الكل ✕</span><span style="font-size:22px;cursor:pointer" onclick="closeCart()">✕</span></span></h2><div class="cart-items" id="cartItems"></div><div class="total"><span>الإجمالي</span><span id="total">0 جنيه</span></div>
 <button class="order-btn site" id="orderBtnSite" disabled onclick="openOrder('site')">✅ تأكيد على الموقع</button>
 <button class="order-btn wa" id="orderBtnWa" disabled onclick="openOrder('whatsapp')">💬 تأكيد على الواتساب</button>
 <p style="font-size:10px;color:#64748b;text-align:center;margin-top:8px">لو واتساب = الطلب يروح واتساب بس - لو موقع = يروح للوحة بس</p>
@@ -65,7 +67,15 @@ const ITEMS=[{id:1,c:"الكشري",n:"ممتاز",p:[{l:"عادي",v:30}]},{id:
 const IMG={"الكشري":"https://images.unsplash.com/photo-1547592180-85f173990554?w=400","كشري ميكس":"https://images.unsplash.com/photo-1547592180-85f173990554?w=400","كشري لحوم":"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400","الطواجن":"https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400","طواجن موتزاريلا":"https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400","اسباجتي":"https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400","اسباجتي موتزاريلا":"https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400","وايت صوص":"https://images.unsplash.com/photo-1482049016688-2d3e1b31122f?w=400","الفراخ الشوايه":"https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400","الحواوشي":"https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400","حلو أفندينا":"https://images.unsplash.com/photo-1488477181946-64290103bbd6?w=400","اضافات الكشري":"https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400","اضافات طواجن":"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400","اضافات متنوعة":"https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400","مشروبات":"https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?w=400"};
 function getStore(k,d){try{let v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 function setStore(k,v){localStorage.setItem(k,JSON.stringify(v))}
-let items=getStore('afandina_products', ITEMS);
+let items=(()=>{
+  try{
+    let raw=localStorage.getItem('afandina_products');
+    if(!raw) return ITEMS;
+    let j=JSON.parse(raw);
+    if(!Array.isArray(j) || j.length===0) return ITEMS;
+    return j;
+  }catch(e){return ITEMS}
+})();
 let settings=getStore('afandina_settings',{phone:'201041707807',contacts:['01041707807'],name:'كشري أفندينا',sub:'الطعم اللي بيجمعنا',logo:'',bg:''});
 if(!settings.contacts || settings.contacts.length===0){settings.contacts = settings.contact ? [settings.contact] : ['01041707807'];}
 function refreshContactBar(){
@@ -76,7 +86,6 @@ bar.innerText = `📞 ${nums.join(' - ')} - خدمة التوصيل متاحة`;
 let nameEl=document.getElementById('shopName'); if(nameEl && settings.name) nameEl.innerText=settings.name;
 let subEl=document.getElementById('shopSub'); if(subEl && settings.sub) subEl.innerText=settings.sub;
 let logoEl=document.getElementById('shopLogo'); if(logoEl && settings.logo && settings.logo.length>20){logoEl.innerHTML=`<img src="${settings.logo}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;}
-// === الخلفية عادية 100% - مش شفافة - ده التعديل الوحيد ===
 if(settings.bg && settings.bg.length>20){
   document.body.style.backgroundImage = `url('${settings.bg}')`;
   document.body.style.backgroundSize = 'cover';
@@ -93,12 +102,22 @@ function renderCats(){let cats=["الكل",...new Set(items.map(i=>i.c))];docume
 function setCat(c){activeCat=c;renderCats();renderProducts()}
 function renderProducts(){let f=activeCat==="الكل"?items:items.filter(i=>i.c===activeCat);document.getElementById('products').innerHTML=f.map(it=>{let sel=selectedPrice[it.id]??0;let opts=it.p.map((pr,idx)=>`<div class="price-opt ${sel===idx?'active':''}" onclick="selectPrice(${it.id},${idx})"><span>${pr.l}</span><b>${pr.v}ج</b></div>`).join('');let img=it.img || IMG[it.c] || IMG["الكشري"];return `<div class="card"><img src="${img}" loading="lazy"><span class="badge">${it.c}</span><h3>${it.n}</h3><div class="price-row">${opts}</div><button class="add-btn" onclick="addToCart(${it.id})">+ اضافه للسله</button></div>`}).join('')}
 function selectPrice(id,idx){selectedPrice[id]=idx;renderProducts()}
-function addToCart(id){let it=items.find(x=>x.id===id);let pi=selectedPrice[id]??0;let pr=it.p[pi];let key=id+'-'+pi;let ex=cart.find(c=>c.key===key);if(ex)ex.qty++;else cart.push({key,n:it.n+(pr.l!=='عادي'?' ('+pr.l+')':''),price:pr.v,qty:1});updateCart();document.getElementById('cartPanel').classList.add('open')}
+function addToCart(id){
+  let it=items.find(x=>x.id===id);let pi=selectedPrice[id]??0;let pr=it.p[pi];let key=id+'-'+pi;let ex=cart.find(c=>c.key===key);
+  if(ex)ex.qty++;else cart.push({key,n:it.n+(pr.l!=='عادي'?' ('+pr.l+')':''),price:pr.v,qty:1});
+  updateCart();
+}
 function updateCart(){document.getElementById('cartCount').innerText=cart.reduce((s,c)=>s+c.qty,0);let tot=cart.reduce((s,c)=>s+c.price*c.qty,0);document.getElementById('total').innerText=tot+' جنيه';let dis=cart.length===0;document.getElementById('orderBtnSite').disabled=dis;document.getElementById('orderBtnWa').disabled=dis;let el=document.getElementById('cartItems');if(cart.length===0){el.innerHTML='<div style="text-align:center;padding:30px;color:#888">السلة فاضية</div>';return}el.innerHTML=cart.map((c,i)=>`<div class="cart-item"><div><b>${c.n}</b><br><small>${c.price}ج × ${c.qty} = ${c.price*c.qty}ج</small></div><div class="qty"><button onclick="changeQty(${i},-1)">-</button><span>${c.qty}</span><button onclick="changeQty(${i},1)">+</button></div></div>`).join('')}
 function changeQty(i,d){cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);updateCart()}
 function clearCart(){cart=[];updateCart()}
-function toggleCart(){document.getElementById('cartPanel').classList.toggle('open')}
-
+function toggleCart(){
+  let p=document.getElementById('cartPanel');let o=document.getElementById('cartOverlay');
+  p.classList.toggle('open'); o.classList.toggle('show');
+}
+function closeCart(){
+  document.getElementById('cartPanel').classList.remove('open');
+  document.getElementById('cartOverlay').classList.remove('show');
+}
 function openOrder(mode){
 if(cart.length===0)return;
 currentMode=mode;
@@ -110,7 +129,6 @@ document.getElementById('orderModal').classList.add('active');
 document.getElementById('orderStatus').innerText='';
 }
 function closeOrder(){document.getElementById('orderModal').classList.remove('active')}
-
 function sendOrder(){
 let name=document.getElementById('custName').value.trim()||'زبون';
 let phone=document.getElementById('custPhone').value.trim();
@@ -128,15 +146,14 @@ orders.unshift(o);setStore('afandina_orders',orders);
 document.getElementById('orderStatus').innerText='جاري الحفظ على الموقع...';
 fetch(SHEET_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(o)}).then(()=>{
 document.getElementById('orderStatus').innerText='تم حفظ الطلب على الموقع ✅';
-setTimeout(()=>{cart=[];updateCart();closeOrder();alert('تم ارسال الطلب على الموقع ✅ هنكلمك حالا');},600);
-}).catch(()=>{document.getElementById('orderStatus').innerText='تم حفظ الطلب محليا ✅'; setTimeout(()=>{cart=[];updateCart();closeOrder();alert('تم ارسال الطلب على الموقع ✅');},600);});
+setTimeout(()=>{cart=[];updateCart();closeOrder();closeCart();alert('تم ارسال الطلب على الموقع ✅ هنكلمك حالا');},600);
+}).catch(()=>{document.getElementById('orderStatus').innerText='تم حفظ الطلب محليا ✅'; setTimeout(()=>{cart=[];updateCart();closeOrder();closeCart();alert('تم ارسال الطلب على الموقع ✅');},600);});
 }else{
 document.getElementById('orderStatus').innerText='جاري فتح الواتساب...';
 window.open('https://wa.me/'+settings.phone+'?text='+encodeURIComponent(msg),'_blank');
-setTimeout(()=>{cart=[];updateCart();closeOrder();alert('تم فتح الواتساب ✅');},500);
+setTimeout(()=>{cart=[];updateCart();closeOrder();closeCart();alert('تم فتح الواتساب ✅');},500);
 }
 }
-
 renderCats();renderProducts();updateCart();refreshContactBar();
 </script>
 </body>
